@@ -1,0 +1,33 @@
+#lang racket
+(provide (all-defined-out))
+
+(define (quat-print quatern port mode)
+  (let ([getSign (lambda (ref) (if (positive? (list-ref (quat-vals quatern) ref)) "+" ""))])
+    (display 
+     (format "~a~a~a~a~a~a~a" 
+             (cond ((= (quat-s quatern) 0) "")
+                   (else (format "~a" (quat-s quatern))))             
+             (if (and (= (quat-s quatern) 0) (eq? (getSign 1) "+")) "" (getSign 1))             
+             (cond ((= (quat-i quatern) 0) "")
+                   ((= (quat-i quatern) 1) "i")
+                   (else (format "~ai" (quat-i quatern))))             
+             (if (and (= (quat-s quatern) 0) (= (quat-i quatern) 0) (eq? (getSign 2) "+")) "" (getSign 2))             
+             (cond ((= (quat-j quatern) 0) "")
+                   ((= (quat-j quatern) 1) "j")
+                   (else (format "~aj" (quat-j quatern))))             
+             (if (and (= (quat-s quatern) 0) (= (quat-i quatern) 0) (= (quat-j quatern) 0) (eq? (getSign 3) "+")) "" (getSign 3))             
+             (cond ((= (quat-k quatern) 0) "")
+                   ((= (quat-k quatern) 1) "k")
+                   (else (format "~ak" (quat-k quatern)))))
+   port)))
+(struct quat (vals)
+  #:methods gen:custom-write
+  [(define write-proc quat-print)])
+(define (quat-s q)
+  (list-ref (quat-vals q) 0))
+(define (quat-i q)
+  (list-ref (quat-vals q) 1))
+(define (quat-j q)
+  (list-ref (quat-vals q) 2))
+(define (quat-k q)
+  (list-ref (quat-vals q) 3))
